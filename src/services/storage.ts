@@ -1,9 +1,10 @@
-import { Customer, Repair, Transaction } from '../types';
+import { Customer, Repair, Transaction, Part } from '../types';
 
 const STORAGE_KEYS = {
   CUSTOMERS: 'fixmaster_customers',
   REPAIRS: 'fixmaster_repairs',
   TRANSACTIONS: 'fixmaster_transactions',
+  PARTS: 'fixmaster_parts',
 };
 
 export const StorageService = {
@@ -47,11 +48,30 @@ export const StorageService = {
   deleteCustomer: (id: string) => {
     const customers = StorageService.getCustomers().filter(c => c.id !== id);
     localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(customers));
-    // Also delete their repairs? Usually better to keep history, but user wants to "apagar para não ficar acumulado"
-    // Let's just delete the customer for now as requested.
   },
   deleteRepair: (id: string) => {
     const repairs = StorageService.getRepairs().filter(r => r.id !== id);
     localStorage.setItem(STORAGE_KEYS.REPAIRS, JSON.stringify(repairs));
+  },
+  getParts: (): Part[] => {
+    const data = localStorage.getItem(STORAGE_KEYS.PARTS);
+    return data ? JSON.parse(data) : [];
+  },
+  savePart: (part: Part) => {
+    const parts = StorageService.getParts();
+    const index = parts.findIndex(p => p.id === part.id);
+    if (index >= 0) {
+      parts[index] = part;
+    } else {
+      parts.push(part);
+    }
+    localStorage.setItem(STORAGE_KEYS.PARTS, JSON.stringify(parts));
+  },
+  deletePart: (id: string) => {
+    const parts = StorageService.getParts().filter(p => p.id !== id);
+    localStorage.setItem(STORAGE_KEYS.PARTS, JSON.stringify(parts));
+  },
+  getPartById: (id: string): Part | undefined => {
+    return StorageService.getParts().find(p => p.id === id);
   }
 };

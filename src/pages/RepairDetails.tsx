@@ -16,7 +16,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { StorageService } from '../services/storage';
 import { PDFService } from '../services/pdfService';
-import { Repair, Customer, User } from '../types';
+import { Repair, Customer, User, Part } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '../lib/utils';
 
@@ -29,6 +29,7 @@ export default function RepairDetails({ user }: RepairDetailsProps) {
   const navigate = useNavigate();
   const [repair, setRepair] = useState<Repair | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
+  const [usedPart, setUsedPart] = useState<Part | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
@@ -38,6 +39,10 @@ export default function RepairDetails({ user }: RepairDetailsProps) {
       setRepair(found);
       const customers = StorageService.getCustomers();
       setCustomer(customers.find(c => c.id === found.customerId) || null);
+      
+      if (found.partId) {
+        setUsedPart(StorageService.getPartById(found.partId) || null);
+      }
     }
   }, [id]);
 
@@ -225,6 +230,12 @@ export default function RepairDetails({ user }: RepairDetailsProps) {
           <section className="bg-blue-600 rounded-3xl p-8 text-white shadow-xl shadow-blue-100 space-y-6">
             <h3 className="text-lg font-bold">Resumo Financeiro</h3>
             <div className="space-y-3">
+              {usedPart && (
+                <div className="p-3 bg-blue-700/50 rounded-xl border border-blue-500/50 space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-blue-200">Peça Utilizada</p>
+                  <p className="text-sm font-bold">{usedPart.name}</p>
+                </div>
+              )}
               <div className="flex justify-between text-blue-100 text-sm">
                 <span>Peças:</span>
                 <span className="font-bold">R$ {repair.budget.partsCost.toFixed(2)}</span>

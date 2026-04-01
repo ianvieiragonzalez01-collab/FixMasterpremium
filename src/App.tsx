@@ -15,7 +15,8 @@ import {
   AlertTriangle,
   Info,
   Clock,
-  Zap
+  Zap,
+  Package
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Toaster, toast } from 'sonner';
@@ -35,6 +36,7 @@ import CustomerDetails from './pages/CustomerDetails';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Subscription from './pages/Subscription';
+import Inventory from './pages/Inventory';
 
 interface Notification {
   id: string;
@@ -216,6 +218,7 @@ export default function App() {
               <SidebarRouteItem icon={LayoutDashboard} label="Dashboard" to="/" />
               <SidebarRouteItem icon={Users} label="Clientes" to="/clientes" />
               <SidebarRouteItem icon={Wrench} label="Serviços" to="/servicos" />
+              <SidebarRouteItem icon={Package} label="Estoque" to="/estoque" />
               <SidebarRouteItem icon={DollarSign} label="Financeiro" to="/financeiro" />
               
               {!user.isSubscribed && (
@@ -398,6 +401,7 @@ export default function App() {
               <Route path="/financeiro" element={(isExpired || trialNotStarted) ? <Subscription user={user} onUpdateUser={setUser} /> : <Finance user={user} />} />
               <Route path="/novo-servico" element={(isExpired || trialNotStarted) ? <Subscription user={user} onUpdateUser={setUser} /> : <NewRepair user={user} onUpdateUser={setUser} />} />
               <Route path="/servico/:id" element={(isExpired || trialNotStarted) ? <Subscription user={user} onUpdateUser={setUser} /> : <RepairDetails user={user} />} />
+              <Route path="/estoque" element={(isExpired || trialNotStarted) ? <Subscription user={user} onUpdateUser={setUser} /> : <Inventory user={user} />} />
               <Route path="/config" element={<Settings user={user} onUpdateUser={setUser} />} />
               <Route path="/assinar" element={<Subscription user={user} onUpdateUser={setUser} />} />
             </Routes>

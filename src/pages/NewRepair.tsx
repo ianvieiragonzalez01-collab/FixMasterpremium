@@ -13,7 +13,7 @@ import {
 import { useNavigate, Link } from 'react-router-dom';
 import { StorageService } from '../services/storage';
 import { GeminiService } from '../services/gemini';
-import { User, Customer, Repair } from '../types';
+import { User, Customer, Repair, Part } from '../types';
 import ReactMarkdown from 'react-markdown';
 import { cn } from '../lib/utils';
 import { toast } from 'sonner';
@@ -26,6 +26,7 @@ interface NewRepairProps {
 export default function NewRepair({ user, onUpdateUser }: NewRepairProps) {
   const navigate = useNavigate();
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiDiagnosis, setAiDiagnosis] = useState('');
@@ -37,6 +38,7 @@ export default function NewRepair({ user, onUpdateUser }: NewRepairProps) {
 
   const [formData, setFormData] = useState({
     customerId: '',
+    partId: '',
     deviceModel: '',
     reportedDefect: '',
     partsCost: 0,
@@ -53,7 +55,25 @@ export default function NewRepair({ user, onUpdateUser }: NewRepairProps) {
 
   useEffect(() => {
     setCustomers(StorageService.getCustomers());
+    setParts(StorageService.getParts().filter(p => p.quantity > 0));
   }, []);
+
+  const handlePartChange = (partId: string) => {
+    const selectedPart = parts.find(p => p.id === partId);
+    if (selectedPart) {
+      setFormData({
+        ...formData,
+        partId,
+        partsCost: selectedPart.salePrice
+      });
+    } else {
+      setFormData({
+        ...formData,
+        partId: '',
+        partsCost: 0
+      });
+    }
+  };
 
   const handleAiDiagnosis = async () => {
     if (!formData.deviceModel || !formData.reportedDefect) return;
@@ -131,10 +151,22 @@ export default function NewRepair({ user, onUpdateUser }: NewRepairProps) {
       },
       entryDate: new Date().toISOString(),
       photos: [],
-      notes: formData.notes
+      notes: formData.notes,
+      partId: formData.partId || undefined
     };
 
     StorageService.saveRepair(repair);
+    
+    // Decrement part quantity if used
+    if (formData.partId) {
+      const part = StorageService.getPartById(formData.partId);
+      if (part) {
+        StorageService.savePart({
+          ...part,
+          quantity: part.quantity - 1
+        });
+      }
+    }
     
     // Save transaction if there's a budget
     if (repair.budget.total > 0) {
@@ -196,6 +228,25 @@ export default function NewRepair({ user, onUpdateUser }: NewRepairProps) {
                     ))}
                   </select>
                   <Link to="/clientes" className="p-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors">
+                    <Plus size={20} />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-700">Peça do Estoque (Opcional)</label>
+                <div className="flex gap-2">
+                  <select 
+                    value={formData.partId}
+                    onChange={(e) => handlePartChange(e.target.value)}
+                    className="flex-1 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  >
+                    <option value="">Nenhuma peça selecionada</option>
+                    {parts.map(p => (
+                      <option key={p.id} value={p.id}>{p.name} (R$ {p.salePrice.toFixed(2)}) - Qtd: {p.quantity}</option>
+                    ))}
+                  </select>
+                  <Link to="/estoque" className="p-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors">
                     <Plus size={20} />
                   </Link>
                 </div>

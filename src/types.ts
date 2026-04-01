@@ -41,6 +41,7 @@ export interface Repair {
   deliveryDate?: string;
   photos: string[]; // base64 or URLs
   notes: string;
+  partId?: string;
 }
 
 export interface Transaction {
@@ -51,4 +52,16 @@ export interface Transaction {
   date: string;
   status: 'completed' | 'scheduled';
   repairId?: string;
+}
+
+export interface Part {
+  id: string;
+  name: string;
+  description?: string;
+  quantity: number;
+  minQuantity: number;
+  costPrice: number;
+  salePrice: number;
+  category?: string;
+  createdAt: string;
 }
