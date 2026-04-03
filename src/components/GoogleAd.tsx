@@ -38,21 +38,28 @@ export default function GoogleAd({ user }: GoogleAdProps) {
   }, []);
 
   return (
-    <div className="w-full mb-6 overflow-hidden rounded-2xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center p-4 min-h-[100px] relative group">
-      <div className="absolute top-2 right-2 px-2 py-0.5 bg-slate-200 text-slate-500 text-[10px] font-bold rounded uppercase tracking-widest">
+    <div className="w-full mb-6 overflow-hidden rounded-2xl bg-slate-50 border border-slate-200 p-4 min-h-[120px] relative">
+      <div className="absolute top-2 right-2 px-2 py-0.5 bg-slate-200/50 text-slate-500 text-[10px] font-bold rounded uppercase tracking-widest z-10 pointer-events-none">
         Anúncio
       </div>
       
-      {/* Real Ad unit */}
-      <ins className="adsbygoogle"
-           style={{ display: 'block' }}
-           data-ad-client="ca-pub-2304641619224073"
-           data-ad-slot="4110976914"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
+      {/* Real Ad unit container */}
+      <div className="w-full flex justify-center">
+        <ins className="adsbygoogle"
+             style={{ display: 'block', minWidth: '250px', minHeight: '90px' }}
+             data-ad-client="ca-pub-2304641619224073"
+             data-ad-slot="4110976914"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+      </div>
       
-      <div className="mt-2 text-[10px] text-blue-600 font-bold hover:underline cursor-pointer">
-        Remover anúncios com FixMaster Pro
+      <div className="mt-3 text-center">
+        <button 
+          onClick={() => window.location.href = '/assinar'}
+          className="text-[10px] text-blue-600 font-bold hover:underline cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
+        >
+          Remover anúncios com FixMaster Pro
+        </button>
       </div>
     </div>
   );
