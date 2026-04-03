@@ -37,6 +37,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Subscription from './pages/Subscription';
 import Inventory from './pages/Inventory';
+import GoogleAd from './components/GoogleAd';
 
 interface Notification {
   id: string;
@@ -393,6 +394,7 @@ export default function App() {
 
           {/* Page Content */}
           <div className="flex-1 overflow-y-auto p-4 lg:p-8">
+            {user && <GoogleAd user={user} />}
             <Routes>
               <Route path="/" element={(isExpired || trialNotStarted) ? <Subscription user={user} onUpdateUser={setUser} /> : <Dashboard user={user} />} />
               <Route path="/clientes" element={(isExpired || trialNotStarted) ? <Subscription user={user} onUpdateUser={setUser} /> : <Customers user={user} />} />
