@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Wrench, Lock, User, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -12,34 +12,6 @@ export default function Login({ onLogin }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const initAd = () => {
-      try {
-        const uninitializedAds = document.querySelectorAll('.adsbygoogle:not([data-adsbygoogle-status])');
-        
-        uninitializedAds.forEach((ad) => {
-          const element = ad as HTMLElement;
-          // Only push if the element is visible and has width
-          if (element.offsetWidth > 0) {
-            // @ts-ignore
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-          }
-        });
-      } catch (e) {
-        console.error('AdSense initialization failed:', e);
-      }
-    };
-
-    // Try multiple times with increasing delays to ensure layout is ready
-    const timers = [
-      setTimeout(initAd, 500),
-      setTimeout(initAd, 2000),
-      setTimeout(initAd, 5000)
-    ];
-
-    return () => timers.forEach(clearTimeout);
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,19 +42,6 @@ export default function Login({ onLogin }: LoginProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-      {/* Google AdMob real unit at the top */}
-      <div className="w-full max-w-md mb-8 overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm flex flex-col items-center justify-center p-4 min-h-[100px] relative">
-        <div className="absolute top-2 right-2 px-2 py-0.5 bg-slate-50 text-slate-400 text-[8px] font-bold rounded uppercase tracking-widest">
-          Anúncio
-        </div>
-        <ins className="adsbygoogle"
-             style={{ display: 'block' }}
-             data-ad-client="ca-pub-2304641619224073"
-             data-ad-slot="4110976914"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-      </div>
-
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
